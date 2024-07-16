@@ -1,39 +1,55 @@
-This is a simple Flask application packaged in a Docker container. To run it on your computer, follow these steps:
+### This is a simple Flask application packaged in a Docker container. 
 
-1. Open your terminal and navigate to the project directory.
+### Steps to copy your files to directory in your EC2 instance
+
+1. Open your terminal: Ensure you are in the directory where your files are located that you want to copy to the EC2 instance.
+
+2. Use scp command: The basic syntax for scp is:
+```
+scp -i /path/to/your/key.pem /path/to/local/file username@ec2-instance-ip:/path/to/destination/directory
+```
+Replace the placeholders with the following:
+
++ /path/to/your/key.pem: Path to your PEM file (key.pem).
++ /path/to/local/file: Path to the file or directory you want to copy from your local machine.
++ username: SSH username of your EC2 instance (ec2-user, ubuntu, etc.).
++ ec2-instance-ip: Public IP address or DNS name of your EC2 instance.
++ /path/to/destination/directory: Path on your EC2 instance where you want to copy the files.
+
+Example:
+```
+scp -i ~/Downloads/key.pem ~/Documents/example.txt ec2-user@3.142.211.164:/home/ec2-user/files/
+```
+
+This command copies example.txt from your local machine (~/Documents/) to the files directory on your EC2 instance (/home/ec2-user/files/).
+
+3. Confirm transfer: After executing the scp command, you might be prompted to confirm connecting to the EC2 instance (type yes if prompted).
+
+4. Enter PEM file passphrase: If your PEM file is encrypted with a passphrase, you may need to enter it.
+
+5. Check file transfer: Once the transfer completes without errors, you should see your file in the specified directory on your EC2 instance.
+
+Additional Tips:
+
++ Ensure your PEM file (key.pem) has restrictive permissions (chmod 400 key.pem) to avoid permission issues.
++ If copying directories recursively, use the -r flag with scp: scp -i key.pem -r local_directory ec2-user@ec2-instance-ip:/remote_directory
+
+## Steps to build and run the Docker container
+
+1. Access your EC2 instance and Navigate to the project directory.
 2. Run the following command to build the Docker container:
    ```
-   docker-compose up --build
+   sudo docker build -t <image_name>:<tag> .
    ```
-
-Once the container is running, you can view the application locally by visiting http://localhost:80 in your web browser. Flask runs inside the container on port 5000, but Docker Compose maps this to port 80 on your machine for easy access.
-
-If your local machine and the EC2 instance have the same CPU architecture (x86 or ARM), you can proceed with these additional steps:
-
-1. Build the Docker image locally by running this command from your project directory:
+3. To run a container in detached mode (in the background), you can use:
    ```
-   docker build -t ec2-flask-demo:v1.0 .
+   docker run -id --name <container_name> -p 80:5000 <image_name>:<tag>
    ```
+   + -p 80:5000: Publishes port 5000 from the container which is default port for Flask to port 80 on the host machine.
 
-2. To compress the Docker image before uploading it to the EC2 instance, save it as a tarball with this command:
-   ```
-   docker save -o ec2-flask-demo.tar ec2-flask-demo:v1.0
-   ```
+4. Once the container is running, you can view the application locally by visiting http://Instance-publicIP:80 in your web browser.
+   + Flask runs inside the container on port 5000, but Docker Compose maps this to port 80 on your machine for easy access.
 
-You'll find a `ec2-flask-demo.tar` file in your project directory after running this command.
-
-3. Upload the tarball to your EC2 instance using `scp`. Use this command (replace `vs-kp-1.pem` with your PEM file and `3.142.211.164` with your EC2 instance's public IP):
-   ```
-   scp -i vs-kp-1.pem ec2-flask-demo.tar ec2-user@3.142.211.164:/home/ec2-user/docker_images
-   ```
-
-If you encounter permission errors with the PEM file, ensure it has the correct permissions by running:
-   ```
-   chmod 600 vs-kp-1.pem
-   ```
-
-The demo Docker image tar file is approximately 180 MB in size. You can verify its presence on the EC2 instance by running `ls` once you're logged in.
-
-These steps will help you set up and deploy your Flask application using Docker, ensuring it runs smoothly both locally and on your EC2 instance.
+These steps will help you set up and deploy your Flask application using Docker, ensuring it runs smoothly on your EC2 instance.
 
 
