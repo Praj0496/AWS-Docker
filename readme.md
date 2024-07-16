@@ -1,5 +1,3 @@
-Here's a more humanized version:
-
 This is a simple Flask application packaged in a Docker container. To run it on your computer, follow these steps:
 
 1. Open your terminal and navigate to the project directory.
@@ -34,7 +32,7 @@ If you encounter permission errors with the PEM file, ensure it has the correct 
    chmod 600 vs-kp-1.pem
    ```
 
-The demo Docker image tar file is approximately 162 MB in size. You can verify its presence on the EC2 instance by running `ls` once you're logged in.
+The demo Docker image tar file is approximately 180 MB in size. You can verify its presence on the EC2 instance by running `ls` once you're logged in.
 
 These steps will help you set up and deploy your Flask application using Docker, ensuring it runs smoothly both locally and on your EC2 instance.
 
