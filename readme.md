@@ -1,18 +1,41 @@
-This is a basic flask app docker container. To run it locally, run cmd: `docker-compose up --build` from the project directory in terminal. 
+Here's a more humanized version:
 
-When the container is running, it will be attached to port 80 of the local machine, go to: http://localhost:80 to view the site. 
+This is a simple Flask application packaged in a Docker container. To run it on your computer, follow these steps:
 
-Flask, by default, is running on port 5000 of the container, but the docker-compose binds host port 80 to container port 5000. 
+1. Open your terminal and navigate to the project directory.
+2. Run the following command to build the Docker container:
+   ```
+   docker-compose up --build
+   ```
 
-The following steps below only work if your local machine has same cpu arch as the ec2 instance (x86 or arm):
-To build the docker image locally, run command: `docker build -t ec2-flask-demo:v1.0 .` from project dir
+Once the container is running, you can view the application locally by visiting http://localhost:80 in your web browser. Flask runs inside the container on port 5000, but Docker Compose maps this to port 80 on your machine for easy access.
 
-Next, we need to save the image as a tarball to compress the artifact before uploading it to the ec2 instance, run cmd: `docker save -o ec2-flask-demo.tar ec2-flask-demo:v1.0` - there should now be a .tar file in the project dir. 
+If your local machine and the EC2 instance have the same CPU architecture (x86 or ARM), you can proceed with these additional steps:
 
-Now, we are going to upload the tar file to the ec2 instance using scp: `scp -i vs-kp-1.pem ec2-flask-demo.tar ec2-user@3.142.211.164:/home/ec2-user/docker_images`
-We get an error if we haven't set the permissions on the .pem file, need to run: `chmod 600 vs-kp-1.pem`
+1. Build the Docker image locally by running this command from your project directory:
+   ```
+   docker build -t ec2-flask-demo:v1.0 .
+   ```
 
-The size of the demo docker image tar file is 162 MB - if you run `ls` from within the ec2 instance, we can now see it. 
+2. To compress the Docker image before uploading it to the EC2 instance, save it as a tarball with this command:
+   ```
+   docker save -o ec2-flask-demo.tar ec2-flask-demo:v1.0
+   ```
 
+You'll find a `ec2-flask-demo.tar` file in your project directory after running this command.
+
+3. Upload the tarball to your EC2 instance using `scp`. Use this command (replace `vs-kp-1.pem` with your PEM file and `3.142.211.164` with your EC2 instance's public IP):
+   ```
+   scp -i vs-kp-1.pem ec2-flask-demo.tar ec2-user@3.142.211.164:/home/ec2-user/docker_images
+   ```
+
+If you encounter permission errors with the PEM file, ensure it has the correct permissions by running:
+   ```
+   chmod 600 vs-kp-1.pem
+   ```
+
+The demo Docker image tar file is approximately 162 MB in size. You can verify its presence on the EC2 instance by running `ls` once you're logged in.
+
+These steps will help you set up and deploy your Flask application using Docker, ensuring it runs smoothly both locally and on your EC2 instance.
 
 
